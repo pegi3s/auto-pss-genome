@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pipeline xmlns="http://www.sing-group.org/compi/pipeline-1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<version>1.0.0</version>
+
+	<params>
+		<param name="host_working_dir" shortName="hw" global="true">Path of the working directory in the host.</param>
+		<param name="working_dir" shortName="w" global="true" defaultValue="/working_dir">Path of the working directory.</param>
+		<param name="compi_num_tasks" shortName="cnt" defaultValue="6" global="true">Maximum number of tasks that can be run in parallel when running other Compi pipelines.</param>
+
+		<param name="params_genome_fast_screen" shortName="pgfs" defaultValue="pss-genome-fs.params">Name of the params file for the GenomeFastScreen pipeline [pegi3s/pss-genome-fs] (relative to the working directory).</param>
+		<param name="params_check_cds" shortName="pcc" defaultValue="check-cds.params">Name of the params file for the CheckCDS pipeline [pegi3s/check-cds] (relative to the working directory).</param>
+		<param name="params_ipssa" shortName="pi" defaultValue="ipssa.params">Name of the params file for the IPSSA pipeline [pegi3s/ipssa] (relative to the working directory).</param>
+
+		<flag name="skip_pull_docker_images" shortName="sdi">Use this flag to skip the pull-docker-images task.</flag>
+		<param name="version_genome_fast_screen" shortName="vgfs" defaultValue="1.3.0" global="true">Version of the pegi3s/pss-genome-fs to use.</param>
+		<param name="version_check_cds" shortName="vcc" defaultValue="1.2.0" global="true">Version of the pegi3s/check-cds to use.</param>
+		<param name="version_ipssa" shortName="vi" defaultValue="latest" global="true">Version of the pegi3s/ipssa to use.</param>
+	</params>
+
+	<tasks>
+		<task id="pull-docker-images" params="skip_pull_docker_images" if="[ -v ${skip_pull_docker_images} ]">
+			docker pull pegi3s/pss-genome-fs:${version_genome_fast_screen}
+			docker pull pegi3s/check-cds:${version_check_cds}
+			docker pull pegi3s/ipssa:${version_ipssa}
+		</task>
+
+		<task id="run-genome-fast-screen" after="pull-docker-images" params="params_genome_fast_screen">
+			docker run --rm \
+				-v /tmp:/tmp -v /var/run/docker.sock:/var/run/docker.sock \
+				-v ${host_working_dir}:/working_dir \
+				pegi3s/pss-genome-fs:${version_genome_fast_screen} \
+					-o --logs /working_dir/logs \
+					--params /working_dir/${params_genome_fast_screen} \
+					--num-tasks ${compi_num_tasks} -- \
+					--host_working_dir ${host_working_dir} \
+					--compi_num_tasks ${compi_num_tasks}
+		</task>
+
+		<task id="prepare-check-cds-init" after="run-genome-fast-screen"
+			if="[ -d ${working_dir}/files_to_re_run ] &amp;&amp; [ ! -z &quot;$(ls -A ${working_dir}/files_to_re_run)&quot; ]">
+			rm -rf ${working_dir}/check_cds
+			mkdir -p ${working_dir}/check_cds/1_files_to_re_run_renamed_back
+		</task>
+
+		<foreach id="prepare-check-cds" after="prepare-check-cds-init"
+			if="[ -d ${working_dir}/files_to_re_run ] &amp;&amp; [ ! -z &quot;$(ls -A ${working_dir}/files_to_re_run)&quot; ]"
+			of="command" in="ls -A ${working_dir}/files_to_re_run/" as="file">
+				docker run --rm \
+					-v ${host_working_dir}:/data \
+					--entrypoint /opt/scripts/put_headers_back.sh \
+					pegi3s/ipssa:${version_ipssa} \
+						/data/files_to_re_run/${file} \
+						/data/fast-screen/renamed_seqs_mappings/${file} \
+						/data/check_cds/1_files_to_re_run_renamed_back/${file}
+		</foreach>
+
+		<task id="check-cds" after="prepare-check-cds"
+			params="params_check_cds"
+			if="[ -d ${working_dir}/files_to_re_run ] &amp;&amp; [ ! -z &quot;$(ls -A ${working_dir}/files_to_re_run)&quot; ]">
+			rm -rf ${working_dir}/check_cds/2_files_to_re_run_fixed
+			mkdir -p ${working_dir}/check_cds/2_files_to_re_run_fixed
+
+			docker run --rm \
+				-v ${host_working_dir}:/params \
+				-v ${host_working_dir}/check_cds/1_files_to_re_run_renamed_back:/input \
+				-v ${host_working_dir}/check_cds/2_files_to_re_run_fixed:/output \
+				pegi3s/check-cds:${version_check_cds} \
+					--params /params/${params_check_cds} \
+					--num-tasks ${compi_num_tasks}
+		</task>
+		
+		<task id="prepare-re-run-files" after="check-cds"
+			if="[ -d ${working_dir}/files_to_re_run ] &amp;&amp; [ ! -z &quot;$(ls -A ${working_dir}/files_to_re_run)&quot; ]">
+			rm -rf ${working_dir}/check_cds/3_renamed_seqs_mappings_inverted
+			mkdir -p ${working_dir}/check_cds/3_renamed_seqs_mappings_inverted
+
+			for file in $(ls -A ${working_dir}/check_cds/1_files_to_re_run_renamed_back/); do
+				cat ${working_dir}/fast-screen/renamed_seqs_mappings/${file} | awk -F'\t' '{print $2 "\t" $1}'> ${working_dir}/check_cds/3_renamed_seqs_mappings_inverted/${file}
+			done
+
+			rm -rf ${working_dir}/check_cds/4_files_to_re_run_fixed_renamed
+			mkdir -p ${working_dir}/check_cds/4_files_to_re_run_fixed_renamed
+		</task>
+
+		<foreach id="rename-check-cds-sequences-back" after="prepare-re-run-files"
+			if="[ -d ${working_dir}/files_to_re_run ] &amp;&amp; [ ! -z &quot;$(ls -A ${working_dir}/files_to_re_run)&quot; ]"
+			of="command" in="ls -A ${working_dir}/files_to_re_run/" as="file">
+				docker run --rm \
+					-v ${host_working_dir}:/data \
+					--entrypoint /opt/scripts/put_headers_back.sh \
+					pegi3s/ipssa:${version_ipssa} \
+						/data/check_cds/2_files_to_re_run_fixed/${file}.corrected \
+						/data/check_cds/3_renamed_seqs_mappings_inverted/${file} \
+						/data/check_cds/4_files_to_re_run_fixed_renamed/${file}
+		</foreach>
+
+		<task id="copy-re-run-files" after="rename-check-cds-sequences-back"
+			if="[ -d ${working_dir}/files_to_re_run ] &amp;&amp; [ ! -z &quot;$(ls -A ${working_dir}/files_to_re_run)&quot; ]">
+			mv ${working_dir}/files_to_re_run ${working_dir}/files_to_re_run_prev
+			mkdir ${working_dir}/files_to_re_run
+
+			# Copy files having at least 3 sequences (i.e. at least six lines, as the check-cds produces files without line breaks)
+			for file in (ls -A ${working_dir}/check_cds/4_files_to_re_run_fixed_renamed/); do
+				COUNT=$(cat ${file} | wc -l)
+				if [ ${COUNT} -ge 6 ]; then
+					cp ${working_dir}/check_cds/4_files_to_re_run_fixed_renamed/${file} ${working_dir}/files_to_re_run/${file}
+				fi
+			done
+		</task>
+		
+		<task id="re-run-genome-fast-screen" after="copy-re-run-files"
+			params="params_genome_fast_screen"
+			if="[ -d ${working_dir}/files_to_re_run ] &amp;&amp; [ ! -z &quot;$(ls -A ${working_dir}/files_to_re_run)&quot; ]">
+			docker run --rm \
+				-v /tmp:/tmp -v /var/run/docker.sock:/var/run/docker.sock \
+				-v ${host_working_dir}:/working_dir \
+				pegi3s/pss-genome-fs:${version_genome_fast_screen} \
+					--single-task fast-screen \
+					-o --logs /working_dir/logs \
+					--params /working_dir/${params_genome_fast_screen} \
+					--num-tasks ${compi_num_tasks} -- \
+					--host_working_dir ${host_working_dir} \
+					--compi_num_tasks ${compi_num_tasks}
+		</task>
+
+		<task id="re-run-genome-fast-screen-results" after="re-run-genome-fast-screen"
+			params="params_genome_fast_screen"
+			if="[ -d ${working_dir}/check_cds/4_files_to_re_run_fixed_renamed ] &amp;&amp; [ ! -z &quot;$(ls -A ${working_dir}/check_cds/4_files_to_re_run_fixed_renamed)&quot; ]">
+			docker run --rm \
+				-v /tmp:/tmp -v /var/run/docker.sock:/var/run/docker.sock \
+				-v ${host_working_dir}:/working_dir \
+				pegi3s/pss-genome-fs:${version_genome_fast_screen} \
+					--from get-short-list-files \
+					-o --logs /working_dir/logs \
+					--params /working_dir/${params_genome_fast_screen} \
+					--num-tasks ${compi_num_tasks} -- \
+					--host_working_dir ${host_working_dir} \
+					--compi_num_tasks ${compi_num_tasks}
+		</task>
+
+		<task id="run-ipssa" after="re-run-genome-fast-screen-results"
+			params="params_ipssa">
+			PROJECT_DIR=${working_dir}/ipssa_project
+
+			rm -rf ${PROJECT_DIR}
+			mkdir -p ${PROJECT_DIR}
+			touch ${PROJECT_DIR}/compi.log
+
+			INPUT_DIR=${PROJECT_DIR}/input
+			mkdir -p ${INPUT_DIR}
+
+			cp ${working_dir}/short_list_dir/* ${INPUT_DIR}
+			cp ${working_dir}/${params_ipssa} ${PROJECT_DIR}/${params_ipssa}
+			echo -e "\n\nhost_working_dir=${host_working_dir}/ipssa_project/pipeline_working_dir" >> ${PROJECT_DIR}/${params_ipssa}
+
+			PROJECT_DIR=${host_working_dir}/ipssa_project
+			PIPELINE_WORKING_DIR=${PROJECT_DIR}/pipeline_working_dir
+			INPUT_DIR=${PROJECT_DIR}/input
+			PARAMS_DIR=${PROJECT_DIR}
+
+			docker run --rm \
+				-v /tmp:/tmp \
+				-v /var/run/docker.sock:/var/run/docker.sock \
+				-v ${PIPELINE_WORKING_DIR}:/working_dir \
+				-v ${INPUT_DIR}:/input \
+				-v ${PARAMS_DIR}:/params \
+				pegi3s/ipssa:${version_ipssa} \
+					-o --logs /working_dir/logs \
+					--num-tasks ${compi_num_tasks} \
+					-pa /params/${params_ipssa} \
+			2>&amp;1 | tee ${working_dir}/ipssa_project/compi.log
+		</task>
+	</tasks>
+</pipeline>

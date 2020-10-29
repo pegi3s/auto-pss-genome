@@ -1,0 +1,6 @@
+#
+# CheckCDS Compi params
+#
+
+# The reference word (case insensitive) in the sequence headers to identify the reference sequences
+reference=

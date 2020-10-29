@@ -1,0 +1,10 @@
+#
+# GenomeFastScreen Compi parameters
+#
+
+input_data_dir=input
+reference_file=XXX
+blast_type=XXX
+
+# The global reference file is optional
+#global_reference_file=global/XXX

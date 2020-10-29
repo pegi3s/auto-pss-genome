@@ -1,0 +1,51 @@
+#The maximum number of sequences to used
+sequence_limit=500
+
+#The random seed
+random_seed=3
+
+### Alignment ###
+
+#The alignment method: clustalw, muscle, kalign, t_coffee, or amap
+align_method=muscle
+
+#Minimum support value for amino acid positions in the alignment
+tcoffee_min_score=3
+
+### MrBayes ###
+
+#MrBayes generations number
+mrbayes_generations=1000000
+
+#MrBayes burnin
+mrbayes_burnin=2500
+
+### FUBAR ###
+
+#The maximum number of sequences to use in FUBAR
+fubar_sequence_limit=10
+
+#The number of FUBAR runs
+fubar_runs=1
+
+### codeML ###
+
+#The maximum number of sequences to use in codeML
+codeml_sequence_limit=10
+
+#The number of codeML runs
+codeml_runs=1
+
+#codeML models (1 2 7 8)
+codeml_models=1 2 7 8
+
+### OmegaMap ###
+
+#The maximum number of sequences to use in OmegaMap
+omegamap_sequence_limit=10
+
+#The number of OmegaMap runs
+omegamap_runs=1
+
+#Number of OmegaMap iterations
+omegamap_iterations=2500
