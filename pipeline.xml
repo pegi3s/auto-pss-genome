@@ -14,9 +14,9 @@
 		<param name="params_ipssa" shortName="pi" defaultValue="ipssa.params">Name of the params file for the IPSSA pipeline [pegi3s/ipssa] (relative to the working directory).</param>
 
 		<flag name="skip_pull_docker_images" shortName="sdi">Use this flag to skip the pull-docker-images task.</flag>
-		<param name="version_genome_fast_screen" shortName="vgfs" defaultValue="1.3.0" global="true">Version of the pegi3s/pss-genome-fs to use.</param>
+		<param name="version_genome_fast_screen" shortName="vgfs" defaultValue="1.5.0" global="true">Version of the pegi3s/pss-genome-fs to use.</param>
 		<param name="version_check_cds" shortName="vcc" defaultValue="1.2.0" global="true">Version of the pegi3s/check-cds to use.</param>
-		<param name="version_ipssa" shortName="vi" defaultValue="latest" global="true">Version of the pegi3s/ipssa to use.</param>
+		<param name="version_ipssa" shortName="vi" defaultValue="1.0.0" global="true">Version of the pegi3s/ipssa to use.</param>
 	</params>
 
 	<tasks>
@@ -98,14 +98,18 @@
 
 		<task id="copy-re-run-files" after="rename-check-cds-sequences-back"
 			if="[ -d ${working_dir}/files_to_re_run ] &amp;&amp; [ ! -z &quot;$(ls -A ${working_dir}/files_to_re_run)&quot; ]">
+			rm -rf ${working_dir}/files_to_re_run_excluded
 			mv ${working_dir}/files_to_re_run ${working_dir}/files_to_re_run_prev
 			mkdir ${working_dir}/files_to_re_run
+			mkdir ${working_dir}/files_to_re_run_excluded
 
-			# Copy files having at least 3 sequences (i.e. at least six lines, as the check-cds produces files without line breaks)
-			for file in (ls -A ${working_dir}/check_cds/4_files_to_re_run_fixed_renamed/); do
-				COUNT=$(cat ${file} | wc -l)
-				if [ ${COUNT} -ge 6 ]; then
-					cp ${working_dir}/check_cds/4_files_to_re_run_fixed_renamed/${file} ${working_dir}/files_to_re_run/${file}
+			# Copy only FASTA files with at least 4 sequences (the minimum required by FastScreen)
+			for file in $(ls -A ${working_dir}/check_cds/4_files_to_re_run_fixed_renamed); do
+				COUNT_SEQS=$(grep '>' ${working_dir}/check_cds/4_files_to_re_run_fixed_renamed/${file} | wc -l);
+				if [ $COUNT_SEQS -ge 4 ]; then
+					cp  ${working_dir}/check_cds/4_files_to_re_run_fixed_renamed ${working_dir}/files_to_re_run/${file}
+				else
+					cp  ${working_dir}/check_cds/4_files_to_re_run_fixed_renamed ${working_dir}/files_to_re_run_excluded/${file}
 				fi
 			done
 		</task>
@@ -173,4 +177,18 @@
 			2>&amp;1 | tee ${working_dir}/ipssa_project/compi.log
 		</task>
 	</tasks>
+
+	<metadata>
+			<task-description id="pull-docker-images">Pulls the necessary Docker images from the pegi3s/dockerfiles project.</task-description>
+			<task-description id="run-genome-fast-screen">Runs the GenomeFastScreen (pegi3s/pss-genome-fs) pipeline using all the input files.</task-description>
+			<task-description id="prepare-check-cds-init">If GenomeFastScreen identifies files to be reanalized, initializes a directory to create temporary results to run the CheckCDS image (pegi3s/check-cds).</task-description>
+			<task-description id="prepare-check-cds">If GenomeFastScreen identifies files to be reanalized, renames all the sequences in the files of the "files_to_re_run" directory (files to be reanalyzed by FastScreen) to use the original sequence headers.</task-description>
+			<task-description id="check-cds">If GenomeFastScreen identifies files to be reanalized, runs the CheckCDS image (pegi3s/check-cds) to fix all the renamed files to be reanalyzed.</task-description>
+			<task-description id="prepare-re-run-files">If GenomeFastScreen identifies files to be reanalized, prepare the files for the "rename-check-cds-sequences-back" task.</task-description>
+			<task-description id="rename-check-cds-sequences-back">If GenomeFastScreen identifies files to be reanalized, renames all the fixed files to use the FastScreen headers (C1, C2, ..., Cn) again.</task-description>
+			<task-description id="copy-re-run-files">If GenomeFastScreen identifies files to be reanalized, copies the fixed files into the "files_to_re_run" directory.</task-description>
+			<task-description id="re-run-genome-fast-screen">If GenomeFastScreen identifies files to be reanalized, runs the FastScreen step of the GenomeFastScreen pipeline using only the fixed files that must be reanalyzed.</task-description>
+			<task-description id="re-run-genome-fast-screen-results">If GenomeFastScreen identifies files to be reanalized, runs the last steps of the GenomeFastScreen pipeline to generate the PSS results again.</task-description>
+			<task-description id="run-ipssa">Runs the IPSSA pipeline (pegi3s/ipssa) using all the files in the "short_list_dir" as input (these files were marked by the GenomeFastScreen pipeline as having signals for positive selection).</task-description>
+	</metadata>
 </pipeline>
