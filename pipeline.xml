@@ -107,9 +107,9 @@
 			for file in $(ls -A ${working_dir}/check_cds/4_files_to_re_run_fixed_renamed); do
 				COUNT_SEQS=$(grep '>' ${working_dir}/check_cds/4_files_to_re_run_fixed_renamed/${file} | wc -l);
 				if [ $COUNT_SEQS -ge 4 ]; then
-					cp  ${working_dir}/check_cds/4_files_to_re_run_fixed_renamed ${working_dir}/files_to_re_run/${file}
+					cp ${working_dir}/check_cds/4_files_to_re_run_fixed_renamed/${file} ${working_dir}/files_to_re_run/${file}
 				else
-					cp  ${working_dir}/check_cds/4_files_to_re_run_fixed_renamed ${working_dir}/files_to_re_run_excluded/${file}
+					cp ${working_dir}/check_cds/4_files_to_re_run_fixed_renamed/${file} ${working_dir}/files_to_re_run_excluded/${file}
 				fi
 			done
 		</task>
