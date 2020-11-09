@@ -35,7 +35,8 @@
 					--params /working_dir/${params_genome_fast_screen} \
 					--num-tasks ${compi_num_tasks} -- \
 					--host_working_dir ${host_working_dir} \
-					--compi_num_tasks ${compi_num_tasks}
+					--compi_num_tasks ${compi_num_tasks} \
+					--keep_temporary_dir
 		</task>
 
 		<task id="prepare-check-cds-init" after="run-genome-fast-screen"
@@ -141,7 +142,8 @@
 					--params /working_dir/${params_genome_fast_screen} \
 					--num-tasks ${compi_num_tasks} -- \
 					--host_working_dir ${host_working_dir} \
-					--compi_num_tasks ${compi_num_tasks}
+					--compi_num_tasks ${compi_num_tasks} \
+					--keep_temporary_dir
 		</task>
 
 		<task id="run-ipssa" after="re-run-genome-fast-screen-results"
@@ -182,7 +184,7 @@
 				-v ${INPUT_DIR}:/input \
 				pegi3s/ipssa:${version_ipssa} \
 					/working_dir/logs /input /working_dir/run_lists \
-                    > ${working_dir}/ipssa_project/compi-errored-tasks.tsv
+					> ${working_dir}/ipssa_project/compi-errored-tasks.tsv
 		</task>
 	</tasks>
 
