@@ -11,7 +11,7 @@
 
 		<param name="params_genome_fast_screen" shortName="pgfs" defaultValue="pss-genome-fs.params">Name of the params file for the GenomeFastScreen pipeline [pegi3s/pss-genome-fs] (relative to the working directory).</param>
 		<param name="params_check_cds" shortName="pcc" defaultValue="check-cds.params">Name of the params file for the CheckCDS pipeline [pegi3s/check-cds] (relative to the working directory).</param>
-		<param name="params_ipssa" shortName="pi" defaultValue="ipssa.params">Name of the params file for the IPSSA pipeline [pegi3s/ipssa] (relative to the working directory).</param>
+		<param name="params_ipssa" shortName="pi" defaultValue="ipssa-project.params">Name of the params file for the IPSSA pipeline [pegi3s/ipssa] (relative to the working directory).</param>
 
 		<flag name="skip_pull_docker_images" shortName="sdi">Use this flag to skip the pull-docker-images task.</flag>
 		<param name="version_genome_fast_screen" shortName="vgfs" defaultValue="1.7.0" global="true">Version of the pegi3s/pss-genome-fs to use.</param>

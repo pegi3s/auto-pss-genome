@@ -1,4 +1,6 @@
 #
-#Fri Oct 23 09:05:04 CEST 2020
+#Tue Nov 10 09:43:57 CET 2020
+hub.pipeline.alias=auto-pss-genome
 compi.version=1.3.7
 image.name=pegi3s/auto-pss-genome
+hub.pipeline.id=5faa52ccf05e940c9c2762e4
