@@ -12,5 +12,3 @@ COPY resources/working_dir/ /opt/working_dir/
 ENV PATH=/opt/scripts/:${PATH}
 
 ADD pipeline.xml /pipeline.xml
-
-# ENTRYPOINT ["/compi", "run",  "-p", "/pipeline.xml"]
