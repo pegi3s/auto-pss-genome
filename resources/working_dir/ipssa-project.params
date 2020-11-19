@@ -2,9 +2,6 @@
 ### General parameters ###
 #
 
-# Host working dir (mandatory)
-host_working_dir=/host/path/to/pipeline_working_dir
-
 # The maximum number of sequences to use for the master file
 sequence_limit=90
 
