@@ -12,10 +12,11 @@
 **Auto-PSS-Genome** (Automatic Positively Selected Sites Genome) is a [Compi](https://www.sing-group.org/compi/) pipeline to automatically identify positively selected amino acid sites (PSS) using three different methods, namely CodeML, omegaMap, and FUBAR in complete genomes (FASTA files containing all coding sequences).
  
 This process comprises the following steps:
-    1. Use the [**GenomeFastScreen**](https://github.com/pegi3s/pss-genome-fs) pipeline to quickly identify genes that likely show PSS.
-    2. Apply the [**CheckCDS**](https://github.com/pegi3s/check-cds) to the files that failed to be analyzed by GenomeFastScreen in order to try to convert them into valid CDS files.
-    3. Reanalyze such files using GenomeFastScreen.
-    4. Finally, perform a more detailed analysis of all the genes that likely show PSS using the [**IPSSA**](https://github.com/pegi3s/ipssa) pipeline.
+
+1. Use the [**GenomeFastScreen**](https://github.com/pegi3s/pss-genome-fs) pipeline to quickly identify genes that likely show PSS.
+2. Apply the [**CheckCDS**](https://github.com/pegi3s/check-cds) to the files that failed to be analyzed by GenomeFastScreen in order to try to convert them into valid CDS files.
+3. Reanalyze such files using GenomeFastScreen.
+4. Finally, perform a more detailed analysis of all the genes that likely show PSS using the [**IPSSA**](https://github.com/pegi3s/ipssa) pipeline.
 
 # Using the Auto-PSS-Genome image in Linux
 In order to use the Auto-PSS-Genome image, create first a directory in your local file system (`auto_pss_genome_project` in the example) with the following structure: 
@@ -39,6 +40,7 @@ auto_pss_genome_project/
 ```
 
 Where:
+
 - The input FASTA files to be analized must be placed in the `auto_pss_genome_project/input` directory.
 - Optionally, the global reference FASTA file for the GenomeFastScreen pipeline must be placed at `auto_pss_genome_project/global/global-reference-file.fasta`.
 - The `pss-genome-fs.params` file contains the Compi parameters file for the GenomeFastScreen pipeline.
@@ -54,11 +56,12 @@ docker run --user "$(id -u):$(id -g)" --rm -v ${AUTO_PSS_GENOME_PD}:/working_dir
 ```
 
 Now, you should:
-    1. Put the input FASTA files in the `auto_pss_genome_project/input` directory.
-    2. If required, put the global reference FASTA file in the `auto_pss_genome_project/global` directory.
-    3. Edit the parameters of the GenomeFastScreen pipeline in the `pss-genome-fs.params` file. Here it is mandatory to set the `reference_file` to be the name of a file in the `auto_pss_genome_project/input` directory and `blast_type`. Optionally, set the `global_reference_file` value (and remove the `#` at the beginning of the line).
-    4. Edit the parameters of the CheckCDS pipeline in the `check-cds.params` file. Here you only need to provide the reference word (case insensitive) in the sequence headers to identify the reference sequences when trying to create valid CDS files.
-    5. Check the values of the parameters of the IPSSA pipeline in the `ipssa-project.params` file. This file contains the default recommended values for this pipeline and may need to be adjusted.
+
+1. Put the input FASTA files in the `auto_pss_genome_project/input` directory.
+2. If required, put the global reference FASTA file in the `auto_pss_genome_project/global` directory.
+3. Edit the parameters of the GenomeFastScreen pipeline in the `pss-genome-fs.params` file. Here it is mandatory to set the `reference_file` to be the name of a file in the `auto_pss_genome_project/input` directory and `blast_type`. Optionally, set the `global_reference_file` value (and remove the `#` at the beginning of the line).
+4. Edit the parameters of the CheckCDS pipeline in the `check-cds.params` file. Here you only need to provide the reference word (case insensitive) in the sequence headers to identify the reference sequences when trying to create valid CDS files.
+5. Check the values of the parameters of the IPSSA pipeline in the `ipssa-project.params` file. This file contains the default recommended values for this pipeline and may need to be adjusted.
 
 Once this structure and files are ready, you should run and adapt the following commands to run the entire pipeline. Here, you only need to set `AUTO_PSS_GENOME_PD` to the right path in your local file system and `COMPI_NUM_TASKS` to the maximum number of parallel tasks that can be run. Note that the `--host_working_dir` is mandatory and must point to the pipeline working directory in the host machine.
 
