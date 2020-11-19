@@ -71,7 +71,7 @@ docker run --rm -v /tmp:/tmp -v /var/run/docker.sock:/var/run/docker.sock -v ${A
 
 # Test data
 
-The sample data is available [here](https://github.com/pegi3s/auto-pss-genome/raw/master/resources/test-data/auto-pss-genome-m-haemophylum.zip). Download and uncompress it, and move to a directory named `auto-pss-genome-test` directory, where you will find:
+The sample data is available [here](https://github.com/pegi3s/auto-pss-genome/raw/master/resources/test-data/auto-pss-genome-m-haemophylum.zip). Download and uncompress it, and move the directory named `auto-pss-genome-m-haemophylum`, where you will find:
 
 - A directory called `auto-pss-genome-project`, that contains the structure described previously.
 - A file called `run.sh`, that contains the following commands (where you should adapt the `AUTO_PSS_GENOME_PD` path) to test the pipeline:
