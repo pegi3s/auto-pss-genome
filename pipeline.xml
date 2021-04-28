@@ -14,9 +14,9 @@
 		<param name="params_ipssa" shortName="pi" defaultValue="ipssa-project.params">Name of the params file for the IPSSA pipeline [pegi3s/ipssa] (relative to the working directory).</param>
 
 		<flag name="skip_pull_docker_images" shortName="sdi">Use this flag to skip the pull-docker-images task.</flag>
-		<param name="version_genome_fast_screen" shortName="vgfs" defaultValue="1.11.0" global="true">Version of the pegi3s/pss-genome-fs to use.</param>
+		<param name="version_genome_fast_screen" shortName="vgfs" defaultValue="1.12.0" global="true">Version of the pegi3s/pss-genome-fs to use.</param>
 		<param name="version_check_cds" shortName="vcc" defaultValue="1.3.0" global="true">Version of the pegi3s/check-cds to use.</param>
-		<param name="version_ipssa" shortName="vi" defaultValue="1.1.0" global="true">Version of the pegi3s/ipssa to use.</param>
+		<param name="version_ipssa" shortName="vi" defaultValue="1.2.0" global="true">Version of the pegi3s/ipssa to use.</param>
 	</params>
 
 	<tasks>
