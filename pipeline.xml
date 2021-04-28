@@ -2,7 +2,7 @@
 
 <pipeline xmlns="http://www.sing-group.org/compi/pipeline-1.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<version>1.5.0</version>
+	<version>1.6.0</version>
 
 	<params>
 		<param name="host_working_dir" shortName="hw" global="true">Path of the working directory in the host.</param>
@@ -36,7 +36,8 @@
 					--num-tasks ${compi_num_tasks} -- \
 					--host_working_dir ${host_working_dir} \
 					--compi_num_tasks ${compi_num_tasks} \
-					--keep_temporary_dir
+					--keep_temporary_dir \
+					2>&amp;1 | tee ${working_dir}/compi.pss-genome-fs.log
 		</task>
 
 		<task id="prepare-check-cds-init" after="run-genome-fast-screen"
@@ -127,7 +128,8 @@
 					--params /working_dir/${params_genome_fast_screen} \
 					--num-tasks ${compi_num_tasks} -- \
 					--host_working_dir ${host_working_dir} \
-					--compi_num_tasks ${compi_num_tasks}
+					--compi_num_tasks ${compi_num_tasks} \
+					2>&amp;1 | tee -a ${working_dir}/compi.pss-genome-fs.log
 		</task>
 
 		<task id="re-run-genome-fast-screen-results" after="re-run-genome-fast-screen"
