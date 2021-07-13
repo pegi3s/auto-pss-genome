@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.9.0] - 2021-07-13
+
+### Changed
+
+- Update IPSSA version to 1.2.1.
+
 ## [1.7.0] - 2021-05-10
 
 ### Changed
@@ -11,7 +17,7 @@
 ### Changed
 
 - Update Compi version to 1.4.0.
-- Update IPSSA version to 1.2.0
+- Update IPSSA version to 1.2.0.
 - Update GenomeFastScreen version to 1.12.0.
 
 ### Aded
