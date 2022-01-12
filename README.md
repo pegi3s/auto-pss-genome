@@ -52,6 +52,8 @@ You can populate the Auto-PSS-Genome project directory, including sample Compi p
 ```bash
 AUTO_PSS_GENOME_PD=/path/to/auto_pss_genome_project
 
+mkdir ${AUTO_PSS_GENOME_PD}
+
 docker run --user "$(id -u):$(id -g)" --rm -v ${AUTO_PSS_GENOME_PD}:/working_dir pegi3s/auto-pss-genome init-working-dir.sh /working_dir
 ```
 
