@@ -1,6 +1,19 @@
 # Changelog
 
-## [1.9.0] - 2021-07-13
+## [1.10.0] - 2023-06-26
+
+### Changed
+
+- Update IPSSA version to 1.2.4.
+
+## [1.9.0] - 2022-09-02
+
+### Changed
+
+- Update IPSSA version to 1.2.3.
+- Update GenomeFastScreen version to 1.14.0.
+
+## [1.8.0] - 2021-07-13
 
 ### Changed
 
