@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.11.0] - 2023-10-18
+
+### Added
+
+- Scripts to create B+ submission files.
+
 ## [1.10.0] - 2023-06-26
 
 ### Changed
@@ -33,7 +39,7 @@
 - Update IPSSA version to 1.2.0.
 - Update GenomeFastScreen version to 1.12.0.
 
-### Aded
+### Added
 
 - Save GenomeFastScreen Compi run log.
 

@@ -1,6 +1,6 @@
 # Mycobacterium haemophilum test dataset
 
-Download and uncompress it, and move the directory named `auto-pss-genome-m-haemophylum`, where you will find: (1) a directory called `auto-pss-genome-project`, that contains the structure described in the README; and (2) a file called `run.sh`, that contains the commands to test the pipeline (you should adapt the `AUTO_PSS_GENOME_PD` path). 
+Download and decompress it, and move the directory named `auto-pss-genome-m-haemophylum`, where you will find: (1) a directory called `auto-pss-genome-project`, that contains the structure described in the README; and (2) a file called `run.sh`, that contains the commands to test the pipeline (you should adapt the `AUTO_PSS_GENOME_PD` path). 
 
 ## Download links
 
@@ -8,6 +8,7 @@ Download and uncompress it, and move the directory named `auto-pss-genome-m-haem
 
 ## Compatible versions
 
+- 1.11.0
 - 1.10.0
 - 1.9.0
 - 1.8.0

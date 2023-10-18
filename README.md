@@ -92,6 +92,10 @@ docker run --rm -v /tmp:/tmp -v /var/run/docker.sock:/var/run/docker.sock -v ${A
 
 - ≈ 11.5 hours - 50 parallel tasks - Ubuntu 18.04.2 LTS, 96 CPUs (AMD EPYC™ 7401 @ 2GHz), 1TB of RAM and SSD disk.
 
+# Preparing B+ submission files
+
+Since `pegi3s/auto-pss-genome:1.11.0` there are included several scripts to help in preparing B+ submission files. Check out [this section](resources/bpositive/README.md) to discover how to use them.
+
 # For Developers
 
 ## Building the Docker image
