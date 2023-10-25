@@ -94,7 +94,7 @@ docker run --rm -v /tmp:/tmp -v /var/run/docker.sock:/var/run/docker.sock -v ${A
 
 # Preparing B+ submission files
 
-Since `pegi3s/auto-pss-genome:1.11.0` there are included several scripts to help in preparing B+ submission files. Check out [this section](resources/bpositive/README.md) to discover how to use them.
+Since `pegi3s/auto-pss-genome:1.11.0` there are included several scripts to help in preparing B+ submission files. Check out [this section](https://github.com/pegi3s/auto-pss-genome/blob/master/resources/bpositive/README.md) to discover how to use them.
 
 # For Developers
 
