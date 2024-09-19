@@ -8,6 +8,7 @@ Download and decompress it, and move the directory named `auto-pss-genome-m-haem
 
 ## Compatible versions
 
+- 1.12.0
 - 1.11.0
 - 1.10.0
 - 1.9.0

@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.12.0] - 2024-09-19
+
+### Changed
+
+- Update IPSSA version to 1.2.5.
+
 ## [1.11.0] - 2023-10-18
 
 ### Added
